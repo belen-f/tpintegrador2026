@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h> //fread, fwrite, fopen, fclose
 #include <cstring> // strcmp y strcpy
+#include <fstream> //para visualizar
 
 using namespace std;
 
@@ -34,7 +35,7 @@ struct NodoComanda
 };
 
 // DECLARO FUNCIONES MOZOS
-void crearMozos(const char *archivoExistente, Nodo *pila);
+void crearMozos(const char *archivoExistente, Nodo *&pila);
 void pushMozo(Mozo *&pila, Mozo *nuevoMozo);
 Nodo *buscarMozoEnPila(Nodo *pila, const char *nombreMozo);
 void crearArchivoMozos(const char *nombreNuevo, Nodo *pila);
@@ -50,12 +51,12 @@ int main()
 {
     // MOZOS
     Nodo *pila = NULL;
-    crearMozos("comandas_historicas.dat", pila);
-    crearArchivoMozos("Mozos.dat", pila);
+    crearMozos("data/comandas_historicas.dat", pila);
+    crearArchivoMozos("mozos.dat", pila);
 
     // COMANDA DIARIA
     NodoComanda *listaComanda = NULL;
-    crearListaOrdenada("comandas_historicas.dat", listaComanda);
+    crearListaOrdenada("data/comandas_historicas.dat", listaComanda);
     crearArchivoComandaPorDia(listaComanda);
 
     return 0;
@@ -87,14 +88,14 @@ void pushMozo(Nodo *&pila, Mozo nuevoMozo)
     pila = nuevoNodo;
 };
 
-void crearMozos(const char *archivoExistente, Nodo *pila)
+void crearMozos(const char *archivoExistente, Nodo *&pila)
 {
     cout << "----- RECORRIENDO COMANDA HISTORICA (MOZOS) -----" << endl;
 
     FILE *f = fopen(archivoExistente, "rb");
     if (f == NULL)
     {
-        cout << "no se pudo leer el archivo" << endl;
+        cout << "--> ERROR: no se pudo leer el archivo" << endl;
         return;
     }
 
@@ -109,7 +110,7 @@ void crearMozos(const char *archivoExistente, Nodo *pila)
         if (mozoEncontrado != NULL)
         {
             mozoEncontrado->datos.totalComision += registro.comision;
-            cout << "MOZO ENCONTRADO: Se actualizo comision del mozo " << mozoEncontrado->datos.nombre << endl;
+            cout << "COMISION ACTUALIZADA: OK" << mozoEncontrado->datos.nombre << endl;
         }
         else
         {
@@ -123,7 +124,7 @@ void crearMozos(const char *archivoExistente, Nodo *pila)
             pushMozo(pila, nuevoMozo);
             idMaximo++; // se incrementa para el próximo mozo
 
-            cout << "MOZO AGREGADO: " << registro.nombreMozo << endl;
+            cout << "MOZO EXISTENTE: " << registro.nombreMozo << endl;
         }
 
         leido = fread(&registro, sizeof(ComandaHistorica), 1, f);
@@ -140,7 +141,7 @@ void crearArchivoMozos(const char *nombreNuevo, Nodo *pila)
     FILE *f = fopen(nombreNuevo, "wb");
     if (f == NULL)
     {
-        cout << "No se pudo crear el archivo Mozos.dat";
+        cout << "--> ERROR: no se pudo crear el archivo";
         return;
     };
 
@@ -151,7 +152,7 @@ void crearArchivoMozos(const char *nombreNuevo, Nodo *pila)
         Mozo mozoAGuardar = aux->datos;
 
         fwrite(&mozoAGuardar, sizeof(Mozo), 1, f);
-        cout << "Mozo " << aux->datos.nombre << ", guardado exitosamente" << endl;
+        cout << "MOZO " << aux->datos.nombre << ", guardado exitosamente" << endl;
 
         pila = pila->siguiente;
 
@@ -160,7 +161,7 @@ void crearArchivoMozos(const char *nombreNuevo, Nodo *pila)
 
     fclose(f);
 
-    cout << "--> OK: Archivo Mozos.dat creado y memoria RAM liberada" << endl;
+    cout << "--> OK: Archivo mozos.dat creado y memoria RAM liberada" << endl;
 };
 
 // DEFINO FUNCIONES COMANDAS DIARIAS
@@ -214,7 +215,7 @@ void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda
 
     if (f == NULL)
     {
-        cout << "No se pudo leer archivo" << endl;
+        cout << "--> ERROR: no se pudo leer el archivo" << endl;
         return;
     }
 
@@ -246,7 +247,7 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda)
         FILE *f = fopen(nombreArchivo.c_str(), "wb");
         if (f == NULL)
         {
-            cout << "No se puedo crear el archivo" << nombreArchivo << endl;
+            cout << "--> ERROR: no se pudo crear el archivo" << nombreArchivo << endl;
             return;
         };
 
@@ -256,7 +257,7 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda)
             NodoComanda *aux = listaComanda;
             ComandaHistorica registroAGuardar = aux->datos;
             fwrite(&registroAGuardar, sizeof(ComandaHistorica), 1, f);
-            cout << "Registro agregado a " << nombreArchivo << "exitosamente" << endl;
+            cout << "Registro agregado a " << nombreArchivo << " exitosamente" << endl;
 
             listaComanda = listaComanda->siguiente;
 
@@ -265,6 +266,6 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda)
 
         fclose(f);
 
-        cout << "OK: Archivo " << nombreArchivo << " creado." << endl;
+        cout << "--> OK: Archivo " << nombreArchivo << " creado." << endl;
     };
 };
