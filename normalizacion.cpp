@@ -34,7 +34,7 @@ struct NodoComanda
 };
 
 // DECLARO FUNCIONES MOZOS
-void crearMozos(const char *archivoExistente, Nodo *pila);
+void crearMozos(const char *archivoExistente, Nodo *&pila);
 void pushMozo(Mozo *&pila, Mozo *nuevoMozo);
 Nodo *buscarMozoEnPila(Nodo *pila, const char *nombreMozo);
 void crearArchivoMozos(const char *nombreNuevo, Nodo *pila);
@@ -50,12 +50,12 @@ int main()
 {
     // MOZOS
     Nodo *pila = NULL;
-    crearMozos("comandas_historicas.dat", pila);
+    crearMozos("data/comandas_historicas.dat", pila);
     crearArchivoMozos("Mozos.dat", pila);
 
     // COMANDA DIARIA
     NodoComanda *listaComanda = NULL;
-    crearListaOrdenada("comandas_historicas.dat", listaComanda);
+    crearListaOrdenada("data/comandas_historicas.dat", listaComanda);
     crearArchivoComandaPorDia(listaComanda);
 
     return 0;
@@ -87,7 +87,7 @@ void pushMozo(Nodo *&pila, Mozo nuevoMozo)
     pila = nuevoNodo;
 };
 
-void crearMozos(const char *archivoExistente, Nodo *pila)
+void crearMozos(const char *archivoExistente, Nodo *&pila)
 {
     cout << "----- RECORRIENDO COMANDA HISTORICA (MOZOS) -----" << endl;
 
