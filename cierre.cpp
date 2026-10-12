@@ -60,7 +60,7 @@ int main(){
     cin>>mes;
 
     char archivoSemanal[30];
-    sprintf(archivoSemanal,"comandas_semana_S%02d_M%02d",numeroSemana,mes);
+    sprintf(archivoSemanal,"comandas_semana_S%02d-%02d.dat",numeroSemana,mes);
     FILE *fsemanal = fopen(archivoSemanal, "wb+");
     if(!fsemanal){
         cout<<"Error al abrir el archivo"<<archivoSemanal<<endl;
@@ -81,22 +81,35 @@ int main(){
 
 
         FILE *fdiario = fopen(archivoDiario, "rb");
-        if(!fdiario==NULL){
-            cout<<"Error al abrir el archivo "<<archivoDiario<<". Verifique la fecha ingresada.<< endl;
+        if(fdiario==NULL){
+             cout<<"Error al abrir el archivo. "<<archivoDiario<< endl;
         } else {
-        comanda c;
-        int contador=0;
-        while(fread(&c,sizeof(comanda),1,fdiario)==1){
+         comanda c;
+         int contador=0; 
+         while(fread(&c,sizeof(comanda),1,fdiario)==1){
             fwrite(&c,sizeof(comanda),1,fsemanal);
-            contador++;
+            contador++; 
         }
-        
-        fclose(fdiario);
-        diasProcesados++;
-        cout<<"Se procesaron "<<contador<<" comandas del dia "<<fechaDia<<endl;
+            fclose(fdiario);
+            diasProcesados++;
+            cout<<"Se procesaron "<<contador<<" comandas del dia "<<fechaDia<<endl;
         }
         cout<<"Desea procesar otro dia? (s/n): ";
         cin>>continuar;
-        }
     }
+
+    if(diasProcesados==0){
+        cout<<"No se procesaron dias, no se puede generar el archivo semanal."<<endl;
+        fclose(fsemanal);
+        return 0;
+    }
+
+    cout<<"Ordenar el archivo semanal por id de mozo..."<<endl;
+    ordenarArchivoSemanal(fsemanal);
+
+    fclose(fsemanal);
+    cout<<"Cierre de semana completado."<<endl;
+    cout<<"Archivo semanal generado: "<<archivoSemanal<<endl;
+
+    return 0;
 }
