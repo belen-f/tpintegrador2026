@@ -46,7 +46,7 @@ Este programa procesa la información inicial contenida en `comandas_historicas.
 
 Sus principales tareas son:
 
-- Generar el archivo `Mozos.dat`.
+- Generar el archivo `mozos.dat`.
 - Asignar un identificador a cada mozo.
 - Calcular la comisión acumulada de cada mozo.
 - Separar las ventas históricas por día.
@@ -65,7 +65,7 @@ Lee:
 
 Genera o modifica:
 
-- `Mozos.dat`
+- `mozos.dat`
 - `comandas_DD-MM-AAAA.dat`
 - `inventario.dat`
 
@@ -90,7 +90,7 @@ A partir de esa fecha abre o crea el archivo:
 Para cada venta el programa:
 
 1. Solicita el ID del mozo.
-2. Busca el mozo en `Mozos.dat`.
+2. Busca el mozo en `mozos.dat`.
 3. Valida la contraseña ingresada.
 4. Solicita el código del producto.
 5. Busca el producto en `inventario.dat`.
@@ -114,7 +114,7 @@ struct Comanda
 ```
 
 ## Búsqueda y validación del mozo
-La búsqueda del mozo se realiza de forma secuencial sobre el archivo `Mozos.dat`.
+La búsqueda del mozo se realiza de forma secuencial sobre el archivo `mozos.dat`.
 Se utiliza el `idMozo` ingresado para localizar el registro correspondiente. Si el mozo no existe, la venta no se registra.
 Una vez encontrado el mozo, se solicita su contraseña y se valida contra la almacenada en el archivo.
 
@@ -146,7 +146,7 @@ El ordenamiento se realiza directamente sobre el archivo binario utilizando `fse
 
 ## Archivos utilizados
 El programa lee:
-- `Mozos.dat`
+- `mozos.dat`
 - `data/inventario.dat`
 
 El programa crea o modifica:

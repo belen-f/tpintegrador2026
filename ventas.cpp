@@ -66,7 +66,7 @@ bool nombreDelArchivoDelDia(char archivoDelDia[])
 Mozo buscarMozo(int idMozo)
 {
 
-    FILE *fMozos = fopen("Mozos.dat", "rb");
+    FILE *fMozos = fopen("mozos.dat", "rb");
 
     Mozo mozoInvalido;
 
@@ -444,11 +444,11 @@ int main()
 //! Lectura de Mozos
 void leerMozos()
 {
-    FILE *archivo = fopen("Mozos.dat", "rb");
+    FILE *archivo = fopen("mozos.dat", "rb");
 
     if (!archivo)
     {
-        cout << "No se pudo abrir Mozos.dat\n";
+        cout << "No se pudo abrir mozos.dat\n";
         return;
     }
 
