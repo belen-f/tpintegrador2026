@@ -28,14 +28,18 @@ struct Comanda
     float comision;
 };
 
-void nombreDelArchivoDelDia(char archivoDelDia[])
+bool nombreDelArchivoDelDia(char archivoDelDia[])
 {
     char fecha[11];
     do
     {
-        cout << "Ingrese la fecha del día en formato DD-MM-AAAA";
+        cout << "Ingrese la fecha del día en formato DD-MM-AAAA" << endl;
 
-        cin >> fecha;
+        if (!(cin >> fecha))
+        {
+            cout << "\nEntrada cancelada." << endl;
+            return 0;
+        }
 
     } while (strlen(fecha) != 10 ||
              fecha[2] != '-' ||
@@ -56,6 +60,7 @@ void nombreDelArchivoDelDia(char archivoDelDia[])
     strcpy(archivoDelDia, "comandas_"); // copia una cadena dentro de otra
     strcat(archivoDelDia, fecha);
     strcat(archivoDelDia, ".dat");
+    return true;
 };
 
 Mozo buscarMozo(int idMozo)
@@ -175,13 +180,13 @@ void modificarArchivoDeComandasDelDia(FILE *archivoDelDiaAbierto, int idMozo, in
     fwrite(&c, sizeof(Comanda), 1, archivoDelDiaAbierto);
 }
 
-void modificarInventario(int codigoProducto, int cantidadVendida)
+bool modificarInventario(int codigoProducto, int cantidadVendida)
 {
     FILE *fInventario = fopen("data/inventario.dat", "rb+");
     if (fInventario == NULL)
     {
         cout << "Archivo inexistente o dañado" << endl;
-        return;
+        return false;
     };
 
     Producto p;
@@ -198,9 +203,15 @@ void modificarInventario(int codigoProducto, int cantidadVendida)
             fwrite(&p, sizeof(Producto), 1, fInventario);
         }
     }
-    if (!encontrado)
-        cout << "No se encontró el producto." << endl;
+
     fclose(fInventario);
+    if (!encontrado)
+    {
+        cout << "No se encontró el producto." << endl;
+        return false;
+    }
+
+    return true;
 }
 
 void registrarVenta(FILE *archivoDelDiaAbierto)
@@ -212,6 +223,15 @@ void registrarVenta(FILE *archivoDelDiaAbierto)
 
     cout << "Ingrese el número identificador del mozo" << endl;
     cin >> idMozo;
+
+    if (cin.fail())
+    {
+        cin.clear();            // quita el estado de error de cin
+        cin.ignore(1000, '\n'); // cin.ignore(1000, '\n');
+
+        cout << "Debe ingresar un número" << endl;
+        return;
+    }
 
     Mozo m = buscarMozo(idMozo);
 
@@ -228,6 +248,15 @@ void registrarVenta(FILE *archivoDelDiaAbierto)
     cout << "Ingrese el código del producto" << endl;
     cin >> codigoProducto;
 
+    if (cin.fail())
+    {
+        cin.clear();            // quita el estado de error de cin
+        cin.ignore(1000, '\n'); // descarta lo que quedó mal ingresado en el buffer.
+
+        cout << "Debe ingresar el código numérico" << endl;
+        return;
+    }
+
     Producto p = buscarProducto(codigoProducto);
 
     if (p.codigo == -1)
@@ -243,6 +272,15 @@ void registrarVenta(FILE *archivoDelDiaAbierto)
     cout << "Ingrese cantidad vendida" << endl;
     cin >> cantidadVendida;
 
+    if (cin.fail())
+    {
+        cin.clear();            // quita el estado de error de cin
+        cin.ignore(1000, '\n'); // descarta lo que quedó mal ingresado en el buffer.
+
+        cout << "Debe ingresar un número" << endl;
+        return;
+    }
+
     bool cantidadValida = validarCantidad(p, cantidadVendida);
 
     if (!cantidadValida)
@@ -250,7 +288,11 @@ void registrarVenta(FILE *archivoDelDiaAbierto)
 
     comision = calcularComision(p, cantidadVendida);
 
-    modificarInventario(p.codigo, cantidadVendida);
+    if (!modificarInventario(p.codigo, cantidadVendida))
+    {
+        return;
+    }
+
     modificarArchivoDeComandasDelDia(archivoDelDiaAbierto, idMozo, p.codigo, cantidadVendida, comision);
 };
 
@@ -306,25 +348,54 @@ void ordenarArchivoDelDiaPorSeleccion(FILE *archivoDelDiaAbierto)
     }
 }
 
+void leerArchivoDeVentas(const char nombreArchivo[])
+{
+    FILE *f = fopen(nombreArchivo, "rb");
+
+    if (f == NULL)
+    {
+        cout << "No se pudo abrir el archivo" << endl;
+        return;
+    }
+
+    Comanda c;
+
+    while (fread(&c, sizeof(Comanda), 1, f) == 1)
+    {
+        cout << "ID Mozo: " << c.idMozo << '\n'
+             << "Código producto: " << c.codigoProducto << '\n'
+             << "Cantidad: " << c.cantidad << '\n'
+             << "Comisión: " << c.comision << "\n\n";
+    }
+
+    fclose(f);
+}
+
 int main()
 {
 
     // Nombre del archivo del día
     //! Me quedo con el nombre guardado, porque primero tengo que abrirlo con ab+ para modificarlo, y después tengo que cerrarlo y abrirlo con rb+ para ordenarlo
     char archivoDelDia[50];
-    nombreDelArchivoDelDia(archivoDelDia);
+    if (!nombreDelArchivoDelDia(archivoDelDia))
+    {
+        return 0;
+    }
 
     // Crear o abrir archivo del archivo del día
     FILE *fArchivoDelDia = fopen(archivoDelDia, "ab+");
 
     if (fArchivoDelDia == NULL)
     {
-        cout << "Archivo dañado o inexistente" << endl;
+        cout << "Archivo inexistente o dañado" << endl;
         return -1;
-    }
+    };
+
+    cout << "LECTURA DEL ARCHIVO ANTES DE GRABAR VENTAS" << endl;
+    leerArchivoDeVentas(archivoDelDia);
 
     // Ingresar ventas
-    bool continuar = 1;
+    int continuar = 1;
 
     do
     {
@@ -332,52 +403,87 @@ int main()
         cout << "¿Desea insertar otra venta?" << '\n'
              << "Ingrese 0 (cero) para NO" << '\n'
              << "Ingrese 1 (uno) para SÍ" << endl;
+
         cin >> continuar;
+
+        if (cin.fail())
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Debe ingresar 0 (cero) o 1 (uno)" << endl;
+            return -1;
+        }
+        else if (continuar != 0 && continuar != 1)
+        {
+            cout << "Valor inválido. Debe ingresar 0 (cero) o 1 (uno)" << endl;
+            return -1;
+        }
+
     } while (continuar);
 
     fclose(fArchivoDelDia);
 
-     FILE *fArchivoDelDiaOrdenar = fopen(archivoDelDia, "rb+");
+    FILE *fArchivoDelDiaOrdenar = fopen(archivoDelDia, "rb+");
+
+    if (fArchivoDelDiaOrdenar == NULL)
+    {
+        cout << "Archivo inexistente o dañado" << endl;
+        return -1;
+    };
+
     ordenarArchivoDelDiaPorSeleccion(fArchivoDelDiaOrdenar);
+
     fclose(fArchivoDelDiaOrdenar);
 
-    //! Prueba de lectura de Mozos
-    // FILE *archivo = fopen("Mozos.dat", "rb");
+    cout << "LECTURA DEL ARCHIVO DESPUÉS DE GRABAR VENTAS" << endl;
+    leerArchivoDeVentas(archivoDelDia);
 
-    // if (!archivo)
-    // {
-    //     cout << "No se pudo abrir Mozos.dat\n";
-    //     return 1;
-    // }
+    return 0;
+}
 
-    // Mozo mozo;
-    // while (fread(&mozo, sizeof(Mozo), 1, archivo))
-    // {
-    //     cout << "ID: " << mozo.idMozo << '\n'
-    //          << "Nombre: " << mozo.nombre << '\n'
-    //          << "Password: " << mozo.password << '\n'
-    //          << "Total comisión: " << mozo.totalComision << "\n\n";
-    // }
-    // fclose(archivo);
+//! Lectura de Mozos
+void leerMozos()
+{
+    FILE *archivo = fopen("Mozos.dat", "rb");
 
-    //! Prueba de lectura de Inventario
-    // FILE *archivo = fopen("data/inventario.dat", "rb");
+    if (!archivo)
+    {
+        cout << "No se pudo abrir Mozos.dat\n";
+        return;
+    }
 
-    // if (!archivo)
-    // {
-    //     cout << "No se pudo abrir Mozos.dat\n";
-    //     return 1;
-    // }
+    Mozo mozo;
+    while (fread(&mozo, sizeof(Mozo), 1, archivo))
+    {
+        cout << "ID: " << mozo.idMozo << '\n'
+             << "Nombre: " << mozo.nombre << '\n'
+             << "Password: " << mozo.password << '\n'
+             << "Total comisión: " << mozo.totalComision << "\n\n";
+    }
+    fclose(archivo);
+}
 
-    // Producto producto;
-    // while (fread(&producto, sizeof(Producto), 1, archivo))
-    // {
-    //     cout << "Código: " << producto.codigo << '\n'
-    //          << "Descripción: " << producto.descripcion << '\n'
-    //          << "Precio: " << producto.precio << '\n'
-    //          << "Stock: " << producto.stockActual << "\n\n";
-    // }
-    // fclose(archivo);
+//! Lectura de Inventario
+void leerInventario()
+{
+
+    FILE *archivo = fopen("data/inventario.dat", "rb");
+
+    if (!archivo)
+    {
+        cout << "No se pudo abrir inventario.dat\n";
+        return;
+    }
+
+    Producto producto;
+    while (fread(&producto, sizeof(Producto), 1, archivo))
+    {
+        cout << "Código: " << producto.codigo << '\n'
+             << "Descripción: " << producto.descripcion << '\n'
+             << "Precio: " << producto.precio << '\n'
+             << "Stock: " << producto.stockActual << "\n\n";
+    }
+    fclose(archivo);
 }
 
 // FLUJO
