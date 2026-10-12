@@ -49,3 +49,54 @@ void ordenarArchivoSemanal(FILE *fsemanal){
         }
     }
 }
+
+int main(){
+    cout<<"MODULO DE CIERRE DE SEMANA"<<endl;
+    
+    int numeroSemana,mes;
+    cout<<"Ingrese el numero de semana: ";
+    cin>>numeroSemana;
+    cout<<"Ingrese el mes: ";
+    cin>>mes;
+
+    char archivoSemanal[30];
+    sprintf(archivoSemanal,"comandas_semana_S%02d_M%02d",numeroSemana,mes);
+    FILE *fsemanal = fopen(archivoSemanal, "wb+");
+    if(!fsemanal){
+        cout<<"Error al abrir el archivo"<<archivoSemanal<<endl;
+        return 1;
+    }
+    char continuar= 's';
+    int diasProcesados=0;
+
+    while(continuar=='s'|| continuar == 'S'){
+        char fechaDia[11];
+        cout<<"Ingrese la fecha del dia (DD-MM-AAAA): ";
+        cin>>fechaDia;
+
+        char archivoDiario[50];
+        strcpy(archivoDiario,"comandas_");
+        strcat(archivoDiario,fechaDia);
+        strcat(archivoDiario,".dat");
+
+
+        FILE *fdiario = fopen(archivoDiario, "rb");
+        if(!fdiario==NULL){
+            cout<<"Error al abrir el archivo "<<archivoDiario<<". Verifique la fecha ingresada.<< endl;
+        } else {
+        comanda c;
+        int contador=0;
+        while(fread(&c,sizeof(comanda),1,fdiario)==1){
+            fwrite(&c,sizeof(comanda),1,fsemanal);
+            contador++;
+        }
+        
+        fclose(fdiario);
+        diasProcesados++;
+        cout<<"Se procesaron "<<contador<<" comandas del dia "<<fechaDia<<endl;
+        }
+        cout<<"Desea procesar otro dia? (s/n): ";
+        cin>>continuar;
+        }
+    }
+}
