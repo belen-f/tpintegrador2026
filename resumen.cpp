@@ -50,5 +50,19 @@ while (leido == 1) {
   cout<< "INFORMACIÓN SEMANAL: " << "
      " << "Mozo ID= "<< mozoActual <<"
      " << "Productos vendidos= " << totalProductosMozo << "
-     " << "Comision a pagar= " << totalComisionMozo
+     " << "Comision a pagar= " << totalComisionMozo << endl;
 }
+
+cout<< "
+  -
+  -
+  -
+  -
+  -
+  -" endl;
+cout<< "TOTAL DE PRODUCTOS VENDIDOS EN EL BUFFET= " << totalProductosBuffet << end;
+
+fclose(f);
+return 0;
+}
+
