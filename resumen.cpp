@@ -4,18 +4,18 @@
 #include <fstream>
 using namespace std;
 
-Struct Comanda{
-  char fecha[11]
+struct Comanda{
+  char fecha[11];
   int idMozo;
   int codigoProducto;
   int cantidad;
   float comision;
-}
+};
 
 int main() {
-  char nombreArchivo[50]
-  cout<< "Ingresar nombre de archivo semanal: "
-    cin<< nombreArchivo
+  char nombreArchivo[50];
+  cout<< "Ingresar nombre de archivo semanal: ";
+  cin>> nombreArchivo;
 
   FILE *f = fopen(nombreArchivo, "rb");
   if (f == NULL){
@@ -42,25 +42,20 @@ while (leido == 1) {
   while (leido ==1 && r.idMozo == mozoActual){
     totalProductosMozo += r.cantidad;
     totalComisionMozo += r.comision;
-    totalProductosBuffet += r.cantidadTotal;
 
     leido = fread(&r, sizeof(Comanda), 1, f);
   }
 
-  cout<< "INFORMACIÓN SEMANAL: " << "
-     " << "Mozo ID= "<< mozoActual <<"
-     " << "Productos vendidos= " << totalProductosMozo << "
-     " << "Comision a pagar= " << totalComisionMozo << endl;
+  cout<< "INFORMACIÓN SEMANAL: " << endl; 
+  cout<< "Mozo ID= "<< mozoActual << endl;
+  cout<< "Productos vendidos= " << totalProductosMozo << endl;
+  cout<< "Comision a pagar= " << totalComisionMozo << endl;
+
+  totalProductosBuffet += totalProductosMozo;
 }
 
-cout<< "
-  -
-  -
-  -
-  -
-  -
-  -" endl;
-cout<< "TOTAL DE PRODUCTOS VENDIDOS EN EL BUFFET= " << totalProductosBuffet << end;
+cout<< "---------------------------------------------------------------------" << endl;
+cout<< "TOTAL DE PRODUCTOS VENDIDOS EN EL BUFFET= " << totalProductosBuffet << endl;
 
 fclose(f);
 return 0;
