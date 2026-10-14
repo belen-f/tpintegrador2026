@@ -5,7 +5,6 @@
 using namespace std;
 
 struct Comanda{
-  char fecha[11];
   int idMozo;
   int codigoProducto;
   int cantidad;
@@ -13,11 +12,11 @@ struct Comanda{
 };
 
 int main() {
-  char nombreArchivo[50];
+  char archivoSemanal[50];
   cout<< "Ingresar nombre de archivo semanal: ";
-  cin>> nombreArchivo;
+  cin>> archivoSemanal;
 
-  FILE *f = fopen(nombreArchivo, "rb");
+  FILE *f = fopen(archivoSemanal, "rb");
   if (f == NULL){
     cout<< "No se pudo abrir el archivo."<< endl;
     return 1;
@@ -29,7 +28,7 @@ int totalProductosBuffet = 0;
 int leido = fread(&r, sizeof(Comanda), 1, f); //lectura anticipada
 
 if (leido != 1){
-  cout<< "El archivo " << nombreArchivo << "no pudo leerse." << endl;
+  cout<< "El archivo " << archivoSemanal << "no pudo leerse." << endl;
   fclose(f);
   return 0;
 }
