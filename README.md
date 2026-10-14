@@ -5,7 +5,7 @@
 
 - [Nombre integrante 1] - GitHub: Sabri-Rapa
 - Sabrina Rapa - GitHub: [COMPLETAR]
-- [Nombre integrante 3] - GitHub: [COMPLETAR]
+- Gabriela Melo Duran - GitHub: gmeloduran
 - [Nombre integrante 4] - GitHub: [COMPLETAR]
 
 ---
@@ -175,3 +175,60 @@ El programa contempla los siguientes casos:
 - archivo de mozos inexistente o dañado;
 - archivo de inventario inexistente o dañado;
 - archivo diario inexistente, que se crea al comenzar la carga.
+
+---
+
+# Cierre.cpp
+
+Responsable: Gabriela Melo Duran
+
+Este programa permite juntar todas las planillas de ventas diarias de una semana en un unico archivo semanal binario, ordenando automaticamente las comandas de menor a mayor segun el codigo de mozo (`idMozo`).
+
+
+Al iniciar, solicita el número de semana y el mes:
+
+`numeroSemana` y `mes`
+
+A partir de estos datos, abre o crea el archivo:
+
+`comandas_semana_sX-mm.dat`
+
+## Consolidación y cierre de semana
+
+Para realizar el cierre de la semana el programa:
+
+1. Solicita el número de semana.
+2. Solicita el mes.
+3. Crea y abre el archivo semanal en modo de escritura y lectura binaria (`wb+`).
+4. Mediante el bucle interativo (`while`), solicita la fecha de cada día a procesar en formato `DD-MM-AAAA`.
+5. Construye el nombre del archivo diario correspondiente (`comandas_DD-MM-AAAA.dat`) y lo abre en modo lectura binaria (`rb`).
+6. Valida la existencia del archivo diario (`fdiario == NULL`); si no existe, avisa por consola pero permite continuar con otros días.
+7. Lee secuencialmente todas las comandas almacenadas en el archivo diario mediante `fread`.
+8. Escribe cada comanda de manera acumulativa en el archivo semanal mediante `fwrite`.
+9. Controla la cantidad de días procesados (`diasProcesados`) e informa la cantidad de comandas leídas por día.
+10. Finalizada la carga de datos, si se procesaron días válidos, invoca la función encargada de ordenar el archivo.
+
+Cada comanda se almacena utilizando la siguiente estructura:
+
+```cpp
+struct comanda {
+    int idMozo;
+    int codigoProducto;
+    int cantidad;
+    float comision;
+};
+```
+
+## Archivos utilizados
+
+El programa lee:
+comandas_DD-MM-AAAA.dat
+
+El programa crea o modifica:
+comandas_semana_sX-mm.dat
+
+## Casos contemplados
+
+- Archivo diario inexistente;
+- Cero días procesados;
+- Semana con cero o una comanda.
