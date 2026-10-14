@@ -29,7 +29,7 @@ int totalProductosBuffet = 0;
 int leido = fread(&r, sizeof(Comanda), 1, f); //lectura anticipada
 
 if (leido != 1){
-  cout<< "El archivo " << nombreArchivo << "no puedo abrirse." << endl;
+  cout<< "El archivo " << nombreArchivo << "no pudo leerse." << endl;
   fclose(f);
   return 0;
 }
