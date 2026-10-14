@@ -63,6 +63,16 @@ bool nombreDelArchivoDelDia(char archivoDelDia[])
     return true;
 };
 
+void encriptarPassword(char password[])
+{
+    const int K = 5;
+
+    for (int i = 0; password[i] != '\0'; i++)
+    {
+        password[i] = password[i] + K;
+    }
+}
+
 Mozo buscarMozo(int idMozo)
 {
 
@@ -98,6 +108,8 @@ Mozo buscarMozo(int idMozo)
     char password[20];
     cout << "Ingrese la contraseña" << endl;
     cin >> password;
+
+    encriptarPassword(password);
 
     if (strcmp(m.password, password) != 0)
     { // strcmp para comparar arrays
@@ -391,7 +403,7 @@ int main()
         return -1;
     };
 
-    cout << "LECTURA DEL ARCHIVO ANTES DE GRABAR VENTAS" << endl;
+    // cout << "LECTURA DEL ARCHIVO ANTES DE GRABAR VENTAS" << endl;
     leerArchivoDeVentas(archivoDelDia);
 
     // Ingresar ventas
@@ -435,7 +447,7 @@ int main()
 
     fclose(fArchivoDelDiaOrdenar);
 
-    cout << "LECTURA DEL ARCHIVO DESPUÉS DE GRABAR VENTAS" << endl;
+    // cout << "LECTURA DEL ARCHIVO DESPUÉS DE GRABAR VENTAS" << endl;
     leerArchivoDeVentas(archivoDelDia);
 
     return 0;
