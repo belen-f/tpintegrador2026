@@ -44,30 +44,6 @@ Responsable: [COMPLETAR]
 
 Este programa procesa la información inicial contenida en `comandas_historicas.dat`.
 
-Sus principales tareas son:
-
-- Generar el archivo `mozos.dat`.
-- Asignar un identificador a cada mozo.
-- Calcular la comisión acumulada de cada mozo.
-- Separar las ventas históricas por día.
-- Generar los archivos `comandas_DD-MM-AAAA.dat`.
-- Reemplazar el nombre del mozo por su identificador en las comandas.
-- Ordenar las comandas por mozo.
-- Actualizar el stock en `inventario.dat`.
-- Guardar las contraseñas de los mozos de forma transformada, evitando almacenarlas en texto plano.
-
-### Archivos utilizados
-
-Lee:
-
-- `comandas_historicas.dat`
-- `inventario.dat`
-
-Genera o modifica:
-
-- `mozos.dat`
-- `comandas_DD-MM-AAAA.dat`
-- `inventario.dat`
 
 ---
 
@@ -175,3 +151,19 @@ El programa contempla los siguientes casos:
 - archivo de mozos inexistente o dañado;
 - archivo de inventario inexistente o dañado;
 - archivo diario inexistente, que se crea al comenzar la carga.
+
+---
+
+# cierre.cpp
+
+Responsable: [COMPLETAR]
+
+Este programa procesa la información inicial contenida en `comandas_historicas.dat`.
+
+---
+
+# resumen.cpp
+
+Responsable: [COMPLETAR]
+
+Este programa procesa la información inicial contenida en `comandas_historicas.dat`.
