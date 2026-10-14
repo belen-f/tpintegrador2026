@@ -2,6 +2,7 @@
 #include <stdio.h> //fread, fwrite, fopen, fclose
 #include <cstring> // strcmp y strcpy
 #include <fstream> //para visualizar
+#include <cstdlib> //exit
 
 using namespace std;
 
@@ -93,6 +94,7 @@ NodoComanda *crearNodo(ComandaHistorica registro);
 NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro);
 void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda);
 void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId);
+void liberarPilaMozoId(NodoId *&pila);
 
 // DECLARO FUNCIONES DE INVENTARIO
 NodoStockHistorico *buscarProducto(NodoStockHistorico *pilaStockHistorico, const char *descripcion, const char *codigo);
@@ -112,6 +114,7 @@ int main()
     NodoComanda *listaComanda = NULL;
     crearListaOrdenada("data/comandas_historicas.dat", listaComanda);
     crearArchivoComandaPorDia(listaComanda, pilaMozoId);
+    liberarPilaMozoId(pilaMozoId);
 
     // INVENTARIO
     NodoStockHistorico *pilaStockHistorico = NULL;
@@ -161,11 +164,11 @@ void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId)
     FILE *f = fopen(archivoExistente, "rb");
     if (f == NULL)
     {
-        cout << "--> ERROR: no se pudo leer el archivo" << endl;
-        return;
+        cout << "-> ERROR: no se pudo leer el archivo. Saliendo del programa..." << endl;
+        exit(EXIT_FAILURE);
     }
 
-    int idMaximo = 1; // para ir asignando ids únicos
+    int idMaximo = 1;
     ComandaHistorica registro;
 
     int leido = fread(&registro, sizeof(ComandaHistorica), 1, f);
@@ -193,7 +196,7 @@ void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId)
 
             pushMozo(pila, nuevoMozo);
             pushMozoId(pilaMozoId, nuevoMozoId);
-            idMaximo++; // se incrementa para el próximo mozo
+            idMaximo++;
 
             cout << "MOZO NUEVO: " << registro.nombreMozo << endl;
         }
@@ -212,8 +215,8 @@ void crearArchivoMozos(const char *nombreNuevo, Nodo *pila)
     FILE *f = fopen(nombreNuevo, "wb");
     if (f == NULL)
     {
-        cout << "--> ERROR: no se pudo crear el archivo";
-        return;
+        cout << "--> ERROR: no se pudo crear el archivo. Saliendo del programa..." << endl;
+        exit(EXIT_FAILURE);
     };
 
     while (pila != NULL)
@@ -232,7 +235,7 @@ void crearArchivoMozos(const char *nombreNuevo, Nodo *pila)
 
     fclose(f);
 
-    cout << "--> OK: Archivo mozos.dat creado y memoria RAM liberada" << endl;
+    cout << "-> OK: Archivo mozos.dat creado y memoria RAM liberada" << endl;
 };
 
 // DEFINO FUNCIONES COMANDAS DIARIAS
@@ -256,11 +259,11 @@ int buscarMozoIdEnPila(NodoId *pila, const char *nombreMozo)
 
         if (strcmp(actual->datos.nombre, nombreMozo) == 0)
         {
-            return actual->datos.idMozo; // si lo encuentra, devuelve el número de id del mozo
+            return actual->datos.idMozo;
         }
-        actual = actual->siguiente; // y avanza al siguiente nodo
+        actual = actual->siguiente;
     }
-    return -1; // si no lo encuentra, devuelve -1
+    return -1; 
 };
 
 NodoComanda *crearNodo(ComandaHistorica registro)
@@ -302,8 +305,8 @@ void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda
 
     if (f == NULL)
     {
-        cout << "--> ERROR: no se pudo leer el archivo" << endl;
-        return;
+        cout << "-> ERROR: no se pudo leer el archivo. Saliendo del programa..." << endl;
+        exit(EXIT_FAILURE);
     }
 
     ComandaHistorica registro;
@@ -335,7 +338,7 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId)
         if (f == NULL)
         {
             cout << "--> ERROR: no se pudo crear el archivo" << nombreArchivo << endl;
-            return;
+            exit(EXIT_FAILURE);
         };
 
         while (listaComanda != NULL && transformarFechaAEntero(fechaActual) == transformarFechaAEntero(listaComanda->datos.fecha))
@@ -350,7 +353,7 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId)
             comandaDiaria.comision = aux->datos.comision;
 
             fwrite(&comandaDiaria, sizeof(ComandaDiaria), 1, f);
-            cout << "Registro agregado a " << nombreArchivo << " exitosamente" << endl;
+            cout << "Registro agregado a " << nombreArchivo << " exitosamente." << endl;
 
             listaComanda = listaComanda->siguiente;
 
@@ -359,9 +362,19 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId)
 
         fclose(f);
 
-        cout << "--> OK: Archivo " << nombreArchivo << " creado." << endl;
+        cout << "-> OK: Archivo " << nombreArchivo << " creado." << endl;
     };
 };
+
+void liberarPilaMozoId(NodoId *&pila)
+{
+    while (pila != NULL)
+    {
+        NodoId *aux = pila;
+        pila = pila->siguiente;
+        delete aux;
+    }
+}
 
 // DEFINO FUNCIONES DE INVENTARIO
 NodoStockHistorico *buscarProducto(NodoStockHistorico *pilaStockHistorico, const int *codigoProducto)
@@ -373,11 +386,11 @@ NodoStockHistorico *buscarProducto(NodoStockHistorico *pilaStockHistorico, const
 
         if (actual->datos.codigoProducto == *codigoProducto)
         {
-            return actual; // si lo encuentra, devuelve el nodo
+            return actual; 
         }
-        actual = actual->siguiente; // avanza al siguiente nodo
+        actual = actual->siguiente;
     }
-    return NULL; // si no lo encuentra, devuelve NULL
+    return NULL;
 };
 
 void pushStock(NodoStockHistorico *&pila, StockHistorico nuevoStock)
@@ -395,8 +408,8 @@ void listarStock(const char *archivoExistente, NodoStockHistorico *&pilaStockHis
     FILE *f = fopen(archivoExistente, "rb");
     if (f == NULL)
     {
-        cout << "--> ERROR: no se pudo leer el archivo" << endl;
-        return;
+        cout << "-> ERROR: no se pudo leer el archivo. Saliendo del programa..." << endl;
+        exit(EXIT_FAILURE);
     }
 
     ComandaHistorica registro;
@@ -406,7 +419,6 @@ void listarStock(const char *archivoExistente, NodoStockHistorico *&pilaStockHis
     {
         NodoStockHistorico *productoEncontrado = buscarProducto(pilaStockHistorico, &registro.codigoProducto);
 
-        // si encontro uno, ve devuelve un objeto del tipo stock historico
         if (productoEncontrado != NULL)
         {
             productoEncontrado->datos.cantidad += registro.cantidad;
@@ -425,7 +437,7 @@ void listarStock(const char *archivoExistente, NodoStockHistorico *&pilaStockHis
     }
 
     fclose(f);
-    cout << "--> OK:  Lista de Stock creada" << endl;
+    cout << "-> OK:  Lista de Stock creada" << endl;
 };
 
 void actualizarStock(const char *archivoInventario, NodoStockHistorico *&pilaStockHistorico)
@@ -435,8 +447,8 @@ void actualizarStock(const char *archivoInventario, NodoStockHistorico *&pilaSto
     FILE *f = fopen(archivoInventario, "rb+");
     if (f == NULL)
     {
-        cout << "--> ERROR: no se pudo crear el archivo" << archivoInventario << endl;
-        return;
+        cout << "-> ERROR: no se pudo leer el archivo " << archivoInventario << ". Saliendo del programa..."<< endl;
+        exit(EXIT_FAILURE);
     };
 
     while (pilaStockHistorico != NULL)
@@ -468,7 +480,7 @@ void actualizarStock(const char *archivoInventario, NodoStockHistorico *&pilaSto
 
         if (!encontrado)
         {
-            cout << "--> ADVERTENCIA: No se encontró el código " << codigoBuscado << " en el inventario." << endl;
+            cout << "-> ADVERTENCIA: No se encontró el código " << codigoBuscado << " en el inventario." << endl;
         }
 
         pilaStockHistorico = pilaStockHistorico->siguiente;
