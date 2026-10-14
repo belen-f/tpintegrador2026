@@ -313,12 +313,12 @@ comandas_semana_sX-mm.dat
 
 Responsable: Laura Camila Otero
 
-Este programa permite generar un listado a partir de un archivo binario con datos semanales. Se busca procesar la información unificada para sí obtener un detalle sobre las ventas y comisiones de cada mozo y de las ventas totales del buffet.
+Este programa permite generar un listado a partir de un archivo binario con datos semanales. Se busca procesar la información unificada para así obtener un detalle sobre las ventas y comisiones de cada mozo y de las ventas totales del buffet.
 
 # Procesamiento
 1. Se le solicita al usuario el nombre del archivo semanal a procesar, "Ingresar nombre de archivo semanal: ".
 
-2. Si el archivo es correcto, este se abre como lectuta binaria (rb), en cambio, si el no pudo abrirse se muestra el mensaje "No se pudo abrir el archivo." y finaliza.
+2. Si el archivo es correcto, este se abre como lectura binaria (rb), en cambio, si el no pudo abrirse se muestra el mensaje "No se pudo abrir el archivo." y finaliza.
 
 3. A partir de este archivo se utiliza fread para hacer una lectura anticipada.
 
@@ -343,7 +343,8 @@ struct comandaSemanal {
 ## Archivos utilizados
 
 El programa lee:
-(comandas_semana_sX-mm.dat) archivo semanal de comandas, nombre ingresado por el usuario.
+
+El archivo semanal de comandas, nombre ingresado por el usuario (el generado por cierre: comandas_semana_sX-mm.dat).
 
 ## Casos contemplados
 
