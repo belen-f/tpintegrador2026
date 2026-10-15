@@ -157,6 +157,16 @@ void pushMozoId(NodoId *&pilaMozoId, MozoId nuevoMozoId)
     pilaMozoId = nuevoNodo;
 };
 
+void encriptarPassword(char password[])
+{
+    const int K = 5;
+
+    for (int i = 0; password[i] != '\0'; i++)
+    {
+        password[i] = password[i] + K;
+    }
+}   
+
 void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId)
 {
     cout << "----- RECORRIENDO COMANDA HISTORICA (MOZOS) -----" << endl;
@@ -191,7 +201,8 @@ void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId)
             Mozo nuevoMozo;
             nuevoMozo.idMozo = idMaximo;
             strcpy(nuevoMozo.nombre, registro.nombreMozo);
-            strcpy(nuevoMozo.password, "1234");
+            strcpy(nuevoMozo.password, "hola1234");
+            encriptarPassword(nuevoMozo.password);
             nuevoMozo.totalComision = registro.comision;
 
             pushMozo(pila, nuevoMozo);
