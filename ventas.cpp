@@ -403,8 +403,8 @@ int main()
         return -1;
     };
 
-    cout << "LECTURA DEL ARCHIVO ANTES DE GRABAR VENTAS" << endl;
-    leerArchivoDeVentas(archivoDelDia);
+    // cout << "LECTURA DEL ARCHIVO ANTES DE GRABAR VENTAS" << endl;
+    // leerArchivoDeVentas(archivoDelDia);
 
     // Ingresar ventas
     int continuar = 1;
@@ -447,56 +447,56 @@ int main()
 
     fclose(fArchivoDelDiaOrdenar);
 
-    cout << "LECTURA DEL ARCHIVO DESPUÉS DE GRABAR VENTAS" << endl;
-    leerArchivoDeVentas(archivoDelDia);
+    // cout << "LECTURA DEL ARCHIVO DESPUÉS DE GRABAR VENTAS" << endl;
+    // leerArchivoDeVentas(archivoDelDia);
 
     return 0;
 }
 
 //! Lectura de Mozos
-void leerMozos()
-{
-    FILE *archivo = fopen("mozos.dat", "rb");
+// void leerMozos()
+// {
+//     FILE *archivo = fopen("mozos.dat", "rb");
 
-    if (!archivo)
-    {
-        cout << "No se pudo abrir mozos.dat\n";
-        return;
-    }
+//     if (!archivo)
+//     {
+//         cout << "No se pudo abrir mozos.dat\n";
+//         return;
+//     }
 
-    Mozo mozo;
-    while (fread(&mozo, sizeof(Mozo), 1, archivo))
-    {
-        cout << "ID: " << mozo.idMozo << '\n'
-             << "Nombre: " << mozo.nombre << '\n'
-             << "Password: " << mozo.password << '\n'
-             << "Total comisión: " << mozo.totalComision << "\n\n";
-    }
-    fclose(archivo);
-}
+//     Mozo mozo;
+//     while (fread(&mozo, sizeof(Mozo), 1, archivo))
+//     {
+//         cout << "ID: " << mozo.idMozo << '\n'
+//              << "Nombre: " << mozo.nombre << '\n'
+//              << "Password: " << mozo.password << '\n'
+//              << "Total comisión: " << mozo.totalComision << "\n\n";
+//     }
+//     fclose(archivo);
+// }
 
 //! Lectura de Inventario
-void leerInventario()
-{
+// void leerInventario()
+// {
 
-    FILE *archivo = fopen("data/inventario.dat", "rb");
+//     FILE *archivo = fopen("data/inventario.dat", "rb");
 
-    if (!archivo)
-    {
-        cout << "No se pudo abrir inventario.dat\n";
-        return;
-    }
+//     if (!archivo)
+//     {
+//         cout << "No se pudo abrir inventario.dat\n";
+//         return;
+//     }
 
-    Producto producto;
-    while (fread(&producto, sizeof(Producto), 1, archivo))
-    {
-        cout << "Código: " << producto.codigo << '\n'
-             << "Descripción: " << producto.descripcion << '\n'
-             << "Precio: " << producto.precio << '\n'
-             << "Stock: " << producto.stockActual << "\n\n";
-    }
-    fclose(archivo);
-}
+//     Producto producto;
+//     while (fread(&producto, sizeof(Producto), 1, archivo))
+//     {
+//         cout << "Código: " << producto.codigo << '\n'
+//              << "Descripción: " << producto.descripcion << '\n'
+//              << "Precio: " << producto.precio << '\n'
+//              << "Stock: " << producto.stockActual << "\n\n";
+//     }
+//     fclose(archivo);
+// }
 
 // FLUJO
 //  fecha
