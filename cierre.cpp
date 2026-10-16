@@ -60,7 +60,7 @@ int main(){
     cin>>mes;
 
     char archivoSemanal[30];
-    sprintf(archivoSemanal,"comandas_semana_S%02d-%02d.dat",numeroSemana,mes);
+    sprintf(archivoSemanal,"comandas_semana_s%02d-%02d.dat",numeroSemana,mes);
     FILE *fsemanal = fopen(archivoSemanal, "wb+");
     if(!fsemanal){
         cout<<"Error al abrir el archivo"<<archivoSemanal<<endl;
