@@ -49,6 +49,7 @@ while (leido == 1) {
   cout<< "Mozo ID= "<< mozoActual << endl;
   cout<< "Productos vendidos= " << totalProductosMozo << endl;
   cout<< "Comision a pagar= " << totalComisionMozo << endl;
+  cout<< "////////////////////////////////////////////////" << endl;
 
   totalProductosBuffet += totalProductosMozo;
 }
