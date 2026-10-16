@@ -1,7 +1,7 @@
 # TP Integrador – El buffet de Alberto
 **Algoritmos y Estructuras de Datos – UTN FRBA**
 
-**Grupo:** [COMPLETAR NÚMERO]
+**Grupo:** []
 
 ## Integrantes
 
@@ -273,7 +273,7 @@ Al iniciar, solicita el número de semana y el mes, con los que construye el nom
 
 **Responsable:** Laura Camila Otero
 
-Este programa procesa el archivo semanal generado por `cierre.cpp` y presenta un resumen de las ventas y comisiones correspondientes a cada mozo.
+Este programa procesa el archivo semanal generado por `cierre.cpp` y presenta un resumen de las ventas (individuales y totales) y comisiones correspondientes a cada mozo.
 
 ### Procesamiento
 
@@ -308,6 +308,7 @@ Este programa procesa el archivo semanal generado por `cierre.cpp` y presenta un
 
 - Archivo semanal inexistente o que no puede abrirse.
 - Errores de lectura del archivo binario.
+
 
 ---
 
