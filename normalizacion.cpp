@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdio.h> //fread, fwrite, fopen, fclose
 #include <cstring> // strcmp y strcpy
-#include <fstream> //para visualizar
 #include <cstdlib> //exit
 
 using namespace std;
