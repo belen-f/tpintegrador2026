@@ -263,7 +263,7 @@ int buscarMozoIdEnPila(NodoId *pila, const char *nombreMozo)
         }
         actual = actual->siguiente;
     }
-    return -1; 
+    return -1;
 };
 
 NodoComanda *crearNodo(ComandaHistorica registro)
@@ -274,14 +274,15 @@ NodoComanda *crearNodo(ComandaHistorica registro)
     return nuevoNodoComanda;
 };
 
-NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro)
+NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro) // tipo void ?
 {
     NodoComanda *nuevoNodo = crearNodo(registro);
 
     if (listaComanda == NULL || transformarFechaAEntero(registro.fecha) < transformarFechaAEntero(listaComanda->datos.fecha))
     {
         nuevoNodo->siguiente = listaComanda;
-        return nuevoNodo;
+        listaComanda = nuevoNodo;
+        return nuevoNodo; // retorna nodo o no ?
     };
 
     NodoComanda *actual = listaComanda;
@@ -294,7 +295,7 @@ NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica regist
 
     nuevoNodo->siguiente = actual->siguiente;
     actual->siguiente = nuevoNodo;
-    return listaComanda;
+    return listaComanda; // y esto ?
 };
 
 void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda)
@@ -315,7 +316,6 @@ void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda
 
     while (leido == 1)
     {
-
         listaComanda = insertarOrdenado(listaComanda, registro);
 
         leido = fread(&registro, sizeof(ComandaHistorica), 1, f);
@@ -330,9 +330,9 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId)
 
     while (listaComanda != NULL)
     {
-        const char *fechaActual = listaComanda->datos.fecha;
 
-        string nombreArchivo = "comandas_" + string(fechaActual) + ".dat";
+        long long fechaIntActual = transformarFechaAEntero(listaComanda->datos.fecha);   // corrección
+        string nombreArchivo = "comandas_" + string(listaComanda->datos.fecha) + ".dat"; // corrección
 
         FILE *f = fopen(nombreArchivo.c_str(), "wb");
         if (f == NULL)
@@ -341,7 +341,7 @@ void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId)
             exit(EXIT_FAILURE);
         };
 
-        while (listaComanda != NULL && transformarFechaAEntero(fechaActual) == transformarFechaAEntero(listaComanda->datos.fecha))
+        while (listaComanda != NULL && fechaIntActual == transformarFechaAEntero(listaComanda->datos.fecha))
         {
 
             NodoComanda *aux = listaComanda;
@@ -386,7 +386,7 @@ NodoStockHistorico *buscarProducto(NodoStockHistorico *pilaStockHistorico, const
 
         if (actual->datos.codigoProducto == *codigoProducto)
         {
-            return actual; 
+            return actual;
         }
         actual = actual->siguiente;
     }
@@ -447,7 +447,7 @@ void actualizarStock(const char *archivoInventario, NodoStockHistorico *&pilaSto
     FILE *f = fopen(archivoInventario, "rb+");
     if (f == NULL)
     {
-        cout << "-> ERROR: no se pudo leer el archivo " << archivoInventario << ". Saliendo del programa..."<< endl;
+        cout << "-> ERROR: no se pudo leer el archivo " << archivoInventario << ". Saliendo del programa..." << endl;
         exit(EXIT_FAILURE);
     };
 
