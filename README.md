@@ -5,7 +5,7 @@
 - Belén Fernández - GitHub: belen-f
 - Sabrina Rapa - GitHub: Sabri-Rapa
 - Gabriela Melo Duran - GitHub: gmeloduran
-- [Nombre integrante 4] - GitHub: [COMPLETAR]
+- Laura Camila Otero - GitHub: LauraOtero20
 
 ---
 
@@ -304,3 +304,50 @@ comandas_semana_sX-mm.dat
 - Archivo diario inexistente;
 - Cero días procesados;
 - Semana con cero o una comanda.
+
+
+
+---
+
+# resumen.cpp
+
+Responsable: Laura Camila Otero
+
+Este programa permite generar un listado a partir de un archivo binario con datos semanales. Se busca procesar la información unificada para así obtener un detalle sobre las ventas y comisiones de cada mozo y de las ventas totales del buffet.
+
+# Procesamiento
+1. Se le solicita al usuario el nombre del archivo semanal a procesar, "Ingresar nombre de archivo semanal: ".
+
+2. Si el archivo es correcto, este se abre como lectura binaria (rb), en cambio, si el no pudo abrirse se muestra el mensaje "No se pudo abrir el archivo." y finaliza.
+
+3. A partir de este archivo se utiliza fread para hacer una lectura anticipada.
+
+4. Se realiza un primer bucle principal para detectar cada cambio de mozo, se recorre el archivo mientra haya registros válidos.
+
+5. Se crea un bucle secundario donde se recorren las comandas de un mismo mozo, acumulandose los productos vendidos y su comisión.
+
+6. Se muestra en pantalla, por cada mozo: su ID, la cantidad de productos vendidos y comisión a pagar.
+
+7. Se suman los productos vendidos por cada mozo, calculando así el total de productos vendidos en el buffet.
+
+8. Al finalizar, se imprime en pantalla el total general de productos vendidos en el buffet.
+
+(Cada comanda se procesa siguiendo el formato del archivo generado en el cierre)=
+struct comandaSemanal {
+    int idMozo;
+    int codigoProducto;
+    int cantidad;
+    float comision;
+};
+
+## Archivos utilizados
+
+El programa lee:
+
+El archivo semanal de comandas, nombre ingresado por el usuario (el generado por cierre: comandas_semana_sX-mm.dat).
+
+## Casos contemplados
+
+- Archivo semanal inexistente o no pudo abrirse.
+- Archivo semanal no pudo leerse.
+
