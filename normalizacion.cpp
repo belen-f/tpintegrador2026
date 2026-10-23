@@ -274,7 +274,7 @@ NodoComanda *crearNodo(ComandaHistorica registro)
     return nuevoNodoComanda;
 };
 
-NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro) // tipo void ?
+NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro)
 {
     NodoComanda *nuevoNodo = crearNodo(registro);
 
@@ -282,7 +282,7 @@ NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica regist
     {
         nuevoNodo->siguiente = listaComanda;
         listaComanda = nuevoNodo;
-        return nuevoNodo; // retorna nodo o no ?
+        return nuevoNodo;
     };
 
     NodoComanda *actual = listaComanda;
@@ -295,7 +295,7 @@ NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica regist
 
     nuevoNodo->siguiente = actual->siguiente;
     actual->siguiente = nuevoNodo;
-    return listaComanda; // y esto ?
+    return listaComanda;
 };
 
 void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda)
