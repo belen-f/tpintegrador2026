@@ -1,8 +1,8 @@
 #include <iostream>
 #include <stdio.h> //fread, fwrite, fopen, fclose
 #include <cstring> // strcmp y strcpy
-#include <fstream> //para visualizar
 #include <cstdlib> //exit
+#include <string>
 
 using namespace std;
 
@@ -82,22 +82,44 @@ struct NodoStockHistorico
 
 // DECLARO FUNCIONES MOZOS
 void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId);
-void pushMozo(Mozo *&pila, Mozo *nuevoMozo);
+void pushMozo(Nodo *&pila, Mozo nuevoMozo);
 void pushMozoId(NodoId *&pilaMozoId, MozoId nuevoMozoId);
 Nodo *buscarMozoEnPila(Nodo *pila, const char *nombreMozo);
-void crearArchivoMozos(const char *nombreNuevo, Nodo *pila);
+void crearArchivoMozos(const char *nombreNuevo, Nodo *&pila);
+void encriptarPassword(char password[]);
 
 // DECLARO FUNCIONES COMANDAS DIARIAS
 long long transformarFechaAEntero(const char *fecha);
 int buscarMozoIdEnPila(NodoId *pila, const char *nombreMozo);
+
+bool registroVaAntes(
+    ComandaHistorica registroA,
+    ComandaHistorica registroB,
+    NodoId *pilaMozoId);
+
 NodoComanda *crearNodo(ComandaHistorica registro);
-NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro);
-void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda);
-void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId);
+
+NodoComanda *insertarOrdenado(
+    NodoComanda *listaComanda,
+    ComandaHistorica registro,
+    NodoId *pilaMozoId);
+
+void crearListaOrdenada(
+    const char *archivoExistente,
+    NodoComanda *&listaComanda,
+    NodoId *pilaMozoId);
+
+void crearArchivoComandaPorDia(
+    NodoComanda *&listaComanda,
+    NodoId *&pilaMozoId);
+
 void liberarPilaMozoId(NodoId *&pila);
 
 // DECLARO FUNCIONES DE INVENTARIO
-NodoStockHistorico *buscarProducto(NodoStockHistorico *pilaStockHistorico, const char *descripcion, const char *codigo);
+NodoStockHistorico *buscarProducto(
+    NodoStockHistorico *pilaStockHistorico,
+    const int *codigoProducto);
+
 void pushStock(NodoStockHistorico *&pila, StockHistorico nuevoStock);
 void listarStock(const char *archivoExistente, NodoStockHistorico *&pilaStockHistorico);
 void actualizarStock(const char *archivoInventario, NodoStockHistorico *&pilaStockHistorico);
@@ -112,7 +134,7 @@ int main()
 
     // COMANDA DIARIA
     NodoComanda *listaComanda = NULL;
-    crearListaOrdenada("data/comandas_historicas.dat", listaComanda);
+    crearListaOrdenada("data/comandas_historicas.dat", listaComanda, pilaMozoId);
     crearArchivoComandaPorDia(listaComanda, pilaMozoId);
     liberarPilaMozoId(pilaMozoId);
 
@@ -123,6 +145,7 @@ int main()
 
     return 0;
 };
+
 
 // DEFINO FUNCIONES MOZOS
 
@@ -165,7 +188,7 @@ void encriptarPassword(char password[])
     {
         password[i] = password[i] + K;
     }
-}   
+}
 
 void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId)
 {
@@ -218,7 +241,7 @@ void crearMozos(const char *archivoExistente, Nodo *&pila, NodoId *&pilaMozoId)
     fclose(f);
 };
 
-void crearArchivoMozos(const char *nombreNuevo, Nodo *pila)
+void crearArchivoMozos(const char *nombreNuevo, Nodo *&pila)
 {
 
     cout << "----- AGUARDE: CREANDO ARCHIVO MOZOS.DAT ... ----- " << endl;
@@ -277,6 +300,30 @@ int buscarMozoIdEnPila(NodoId *pila, const char *nombreMozo)
     return -1;
 };
 
+bool registroVaAntes(
+    ComandaHistorica registroA,
+    ComandaHistorica registroB,
+    NodoId *pilaMozoId)
+{
+    long long fechaA = transformarFechaAEntero(registroA.fecha);
+    long long fechaB = transformarFechaAEntero(registroB.fecha);
+
+    if (fechaA < fechaB)
+    {
+        return true;
+    }
+
+    if (fechaA > fechaB)
+    {
+        return false;
+    }
+
+    int idMozoA = buscarMozoIdEnPila(pilaMozoId, registroA.nombreMozo);
+    int idMozoB = buscarMozoIdEnPila(pilaMozoId, registroB.nombreMozo);
+
+    return idMozoA < idMozoB;
+}
+
 NodoComanda *crearNodo(ComandaHistorica registro)
 {
     NodoComanda *nuevoNodoComanda = new NodoComanda();
@@ -285,33 +332,47 @@ NodoComanda *crearNodo(ComandaHistorica registro)
     return nuevoNodoComanda;
 };
 
-NodoComanda *insertarOrdenado(NodoComanda *listaComanda, ComandaHistorica registro)
+NodoComanda *insertarOrdenado(
+    NodoComanda *listaComanda,
+    ComandaHistorica registro,
+    NodoId *pilaMozoId)
 {
     NodoComanda *nuevoNodo = crearNodo(registro);
 
-    if (listaComanda == NULL || transformarFechaAEntero(registro.fecha) < transformarFechaAEntero(listaComanda->datos.fecha))
+    // Si la lista está vacía o el nuevo registro debe ir antes del primero
+    if (listaComanda == NULL ||
+        registroVaAntes(registro, listaComanda->datos, pilaMozoId))
     {
         nuevoNodo->siguiente = listaComanda;
-        listaComanda = nuevoNodo;
         return nuevoNodo;
-    };
+    }
 
     NodoComanda *actual = listaComanda;
 
-    while (actual->siguiente != NULL &&
-           transformarFechaAEntero(actual->siguiente->datos.fecha) < transformarFechaAEntero(registro.fecha))
+    // Avanzo mientras el nuevo registro NO tenga que ir
+    // antes del siguiente
+    while (
+        actual->siguiente != NULL &&
+        !registroVaAntes(
+            registro,
+            actual->siguiente->datos,
+            pilaMozoId))
     {
         actual = actual->siguiente;
     }
 
     nuevoNodo->siguiente = actual->siguiente;
     actual->siguiente = nuevoNodo;
-    return listaComanda;
-};
 
-void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda)
+    return listaComanda;
+}
+
+void crearListaOrdenada(
+    const char *archivoExistente,
+    NodoComanda *&listaComanda,
+    NodoId *pilaMozoId)
 {
-    cout << "----- RECORRIENDO COMANDA HISTORICA (FECHA) -----" << endl;
+    cout << "----- RECORRIENDO COMANDA HISTORICA (FECHA Y MOZO) -----" << endl;
 
     FILE *f = fopen(archivoExistente, "rb");
 
@@ -323,17 +384,30 @@ void crearListaOrdenada(const char *archivoExistente, NodoComanda *&listaComanda
 
     ComandaHistorica registro;
 
-    int leido = fread(&registro, sizeof(ComandaHistorica), 1, f);
+    int leido = fread(
+        &registro,
+        sizeof(ComandaHistorica),
+        1,
+        f);
 
     while (leido == 1)
     {
-        listaComanda = insertarOrdenado(listaComanda, registro);
+        listaComanda = insertarOrdenado(
+            listaComanda,
+            registro,
+            pilaMozoId);
 
-        leido = fread(&registro, sizeof(ComandaHistorica), 1, f);
+        leido = fread(
+            &registro,
+            sizeof(ComandaHistorica),
+            1,
+            f);
     }
+
     fclose(f);
-    cout << "--> OK: Lista Ordenada por Fecha" << endl;
-};
+
+    cout << "-> OK: Lista ordenada por fecha y mozo" << endl;
+}
 
 void crearArchivoComandaPorDia(NodoComanda *&listaComanda, NodoId *&pilaMozoId)
 {
