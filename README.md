@@ -231,13 +231,16 @@ Al iniciar, solicita el número de semana y el mes, con los que construye el nom
 ### Consolidación de comandas
 
 1. Solicita el número de semana y el mes.
-2. Crea el archivo semanal en modo lectura y escritura binaria (`wb+`).
+2. Crea el archivo semanal en modo escritura binaria (`wb`).
 3. Solicita las fechas de los archivos diarios que se desean procesar.
 4. Construye el nombre de cada archivo diario y lo abre en modo lectura binaria (`rb`).
 5. Si el archivo no existe, informa el error y permite continuar con otros días.
-6. Lee las comandas mediante `fread` y las incorpora al archivo semanal utilizando `fwrite`.
-7. Informa la cantidad de comandas procesadas por cada día.
-8. Al finalizar, ordena el archivo semanal por `idMozo`.
+6. El primer archivo diario procesado se copia directamente al archivo semanal
+7. Los archivos diarios siguientes se incorporan al semanal utilizando la función apareoArchivos().
+8. El resultado del apareo se almacena temporalmente en temp.dat.
+9. El archivo temporal reemplaza al archivo semanal anterior.
+10. Informa la cantidad de comandas procesadas por cada día.
+11. Al finalizar se genera un único archivo semanal manteniendo el orden por idMozo.
 
 ### Técnicas utilizadas
 
@@ -245,7 +248,7 @@ Al iniciar, solicita el número de semana y el mes, con los que construye el nom
 
 **Consolidación de archivos:** los registros de cada día se incorporan a un único archivo semanal.
 
-**Ordenamiento:** las comandas consolidadas se ordenan por `idMozo` para facilitar su posterior procesamiento.
+**Apareo:** los archivos diarios previamente ordenados por idMozo se combinan en un único archivo semanal manteniendo el orden.
 
 ### Archivos utilizados
 
@@ -260,8 +263,13 @@ Al iniciar, solicita el número de semana y el mes, con los que construye el nom
 ### Casos contemplados
 
 - Archivo diario inexistente.
+- Error al abrir el archivo semanal.
 - Ningún día procesado correctamente.
-- Archivo semanal con cero o una comanda.
+- Consolidación de una única planilla diaria.
+- consolidación de múltiples planillas diarias.
+
+**Observación**
+- Durante las pruebas se detectó que los archivos .dat conservan información de ejecuciones anteriores. Por este motivo, antes de realizar una validación completa se recomienda eliminar los archivos generados y ejecutar nuevamente el flujo completo del sistema.
 
 ---
 
