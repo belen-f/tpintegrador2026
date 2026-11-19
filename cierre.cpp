@@ -90,11 +90,11 @@ int main(){
 
                     fclose(fdiario);
                     return 1;
-                        
-                    apareoArchivos (fsemanal, fdiario, ftemp);
-                    fclose(fsemanal);
-                    fclose(ftemp);
                 }
+                apareoArchivos (fsemanal, fdiario, ftemp);
+                fclose(fsemanal);
+                fclose(ftemp);
+
                 remove(archivoSemanal);
                 rename("temp.dat",archivoSemanal);
                 cout<<"Las comandas del dia "<<fechaDia<<" fueron agregadas al cierre semanal."<<endl;
